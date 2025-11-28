@@ -17,7 +17,54 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zen Login — Animated</title>
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background image element (animatable by GSAP) -->
+<div class="bg" aria-hidden="true">
+  <img class="bg-img" src="bg2.jpg" alt="Zen background">
+</div>
+
+<div class="card" id="card">
+  <div class="avatar" id="avatar" aria-hidden="true">
+    <!-- small icon -->
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="8" r="3" stroke="#16a34a" stroke-width="1.6" fill="rgba(22,163,74,0.06)"/>
+      <path d="M4 20c1-3 4-5 8-5s7 2 8 5" stroke="#93c5a1" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <h1>Welcome Back</h1>
+  <p class="lead">Enter your details to access your space</p>
+
+  <form id="loginForm">
+    <label for="email">Email</label>
+    <input id="email" name="email" class="field" placeholder="hello@example.com" type="email" required />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" class="field" placeholder="••••••••" type="password" required />
+
+    <button id="btn" class="btn" type="submit">Sign In →</button>
+
+    <div class="signup">
+      Don't have an account? <a href="#">Sign up</a>
+    </div>
+  </form>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
+
 </head>
 
 <body>
