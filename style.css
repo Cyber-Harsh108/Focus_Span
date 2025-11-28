@@ -33,6 +33,8 @@ body {
 body {
     font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg-sand);
+    background-size: cover;
+    background-attachment: local;
     color: var(--text-main);
     position: relative;
     overflow-x: hidden;
@@ -478,12 +480,13 @@ body {
     }
 }
 
-#about-box,
-#features-box,
-#streak-box,
-#login-box {
+#about-box {
     scroll-margin-top: 10px;
     /* adjust as needed */
+}
+
+#features-box {
+    scroll-margin-top: 45px;
 }
 
 .nav-btn {
@@ -515,15 +518,17 @@ body {
     /* keeps zen colors */
 }
 
-/* Hidden before scroll */
+/* Default hidden state */
 .reveal {
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s ease;
+    filter: blur(3px);
+    transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
 }
 
-/* Visible when scrolled into view */
+/* Visible when in viewport */
 .reveal.visible {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
 }

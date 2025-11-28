@@ -155,6 +155,29 @@
       const [journal, setJournal] = useState("");
 
       useEffect(() => {
+  const revealEls = document.querySelectorAll(".reveal");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        } else {
+          entry.target.classList.remove("visible"); // fade out when leaving
+        }
+      });
+    },
+    {
+      threshold: 0.2, // small amount visible triggers animation
+    }
+  );
+
+  revealEls.forEach((el) => observer.observe(el));
+
+  return () => observer.disconnect();
+}, []);
+
+      useEffect(() => {
         try {
           const saved = JSON.parse(localStorage.getItem("zenspark_state") || "{}");
           if (!saved) return;
@@ -249,7 +272,7 @@
                   </div>
 
                   <div className="hero-cta-row">
-                    <button className="btn-primary" onClick={() => setShowDashboard(true)}><i className="ri-play-circle-fill"></i> Enter ZenSpark Dashboard</button>
+                    <button className="btn-primary"><i className="ri-play-circle-fill"></i> Enter ZenSpark Dashboard</button>
                     <div className="hero-note"><i className="ri-sun-cloudy-line"></i> No sign-up, no rankings — just you, your focus, and soft structure.</div>
                   </div>
 
@@ -261,7 +284,7 @@
                 </div>
 
                 {/* RIGHT stacked boxes: About, Features, Streak, Login */}
-                <div className="landing-right" id="about-box">
+                <div className="landing-right reveal" id="about-box">
                   <div className="landing-right-title"><i className="ri-information-line"></i> About ZenSpark</div>
                   <p className="landing-right-note">ZenSpark is a soft, minimal companion built for overwhelmed students. Instead of pushing pressure, it creates a gentle environment where you can focus, breathe, and make progress without guilt.</p>
 
@@ -295,7 +318,7 @@
                   </div>
                 </div>
 
-                <div className="landing-right" id="features-box">
+                <div className="landing-right reveal" id="features-box">
                   <div className="landing-right-title"><i className="ri-star-smile-line"></i> Features</div>
                   <p className="landing-right-note">ZenSpark provides simple, powerful tools to help you stay focused, motivated, and mentally balanced every single day.</p>
 
@@ -329,7 +352,7 @@
                   </div>
                 </div>
 
-                <div className="landing-right" id="streak-box">
+                <div className="landing-right reveal" id="streak-box">
                   <div className="landing-right-title"><i className="ri-fire-line"></i> Streak System</div>
                   <p className="landing-right-note">Build gentle consistency — the streak keeps you motivated without pressure.</p>
 
@@ -368,142 +391,6 @@
           </div>
         );
       }
-
-      // DASHBOARD VIEW (unchanged)
-      const moodMsg = mood ? MOOD_MESSAGES[mood] : "Tap the emoji that feels closest. ZenSpark adapts to your mood, not the other way around.";
-      const levelPercent = Math.min(100, (xp % 100) );
-      const focusPercent = Math.min(100, (focusSessions / 4) * 100);
-      const resistPercent = Math.min(100, (distractionsResisted / 5) * 100);
-
-      return (
-        <div className="app">
-          <div className="shell">
-            <header className="top-bar">
-              <div className="brand-left">
-                <div className="brand-logo">Z</div>
-                <div>
-                  <div className="brand-text-main">ZenSpark <span className="brand-dot"></span></div>
-                  <div className="brand-subtitle">Calm Mind • Energetic Flow</div>
-                </div>
-              </div>
-              <div className="top-bar-right">
-                <div className="small-pill"><i className="ri-seedling-line"></i> Today is a new chance to show up softly for yourself.</div>
-              </div>
-            </header>
-
-            <main className="dashboard-grid">
-              <aside className="panel sidebar">
-                <section>
-                  <div className="section-label">Welcome</div>
-                  <div className="greeting-title">Namaste, {name} 🌿</div>
-                  <div className="greeting-sub">This is your sand-garden for focus, rest and tiny wins.</div>
-                </section>
-
-                <section>
-                  <div className="section-label">How are you feeling?</div>
-                  <div className="mood-buttons">
-                    <button className={`mood-btn ${mood === "great" ? "active" : ""}`} onClick={()=>setMood("great")}>😄</button>
-                    <button className={`mood-btn ${mood === "okay" ? "active" : ""}`} onClick={()=>setMood("okay")}>🙂</button>
-                    <button className={`mood-btn ${mood === "low" ? "active" : ""}`} onClick={()=>setMood("low")}>😶</button>
-                    <button className={`mood-btn ${mood === "stressed" ? "active" : ""}`} onClick={()=>setMood("stressed")}>😥</button>
-                  </div>
-                  <div className="mood-text">{moodMsg}</div>
-                </section>
-
-                <section>
-                  <div className="section-label">60-second calm reset</div>
-                  <div className="breathe-card">
-                    <div className="breathe-circle">Inhale<br/>Hold<br/>Exhale</div>
-                    <div className="breathe-text"><strong>Before studying</strong>, give your brain a soft landing. Try 4–4–4 breathing: 4 sec inhale, 4 sec hold, 4 sec exhale.</div>
-                  </div>
-                </section>
-
-                <section>
-                  <div className="section-label">Gentle reminder</div>
-                  <div className="quote-card">
-                    <div className="quote-text">“{quote.text}”</div>
-                    <div className="quote-author">— {quote.author}</div>
-                  </div>
-                </section>
-              </aside>
-
-              <section className="panel main-panel">
-                <header className="dashboard-header">
-                  <div>
-                    <div className="section-label">Today's focus</div>
-                    <div className="dh-title">Let's move your goals forward softly.</div>
-                    <div className="dh-subtitle">One focus block, one tiny task, one kinder thought at a time.</div>
-                  </div>
-                  <div className="dh-right">
-                    <div className="date-chip"><i className="ri-calendar-2-line"></i> {dateStr} • {timeStr}</div>
-                    <span>All data is stored only in your browser.</span>
-                  </div>
-                </header>
-
-                <section className="stats-grid">
-                  <CircleProgress value={levelPercent} label={`Level ${level}`} sub="Calm Learner" xpText={`XP: ${xp} • Next level at 100`} />
-                  <CircleProgress value={focusPercent} label="Focus sessions" sub={`${focusSessions} completed today`} xpText="+30 XP per session" />
-                  <CircleProgress value={resistPercent} label="Reels resisted" sub={`${distractionsResisted} times today`} xpText="+10 XP per resist" />
-                </section>
-
-                <section className="main-grid">
-                  <div className="card">
-                    <FocusTimer onSessionComplete={handleFocusComplete} />
-                  </div>
-
-                  <div className="card">
-                    <div className="card-header-row">
-                      <div>
-                        <div className="card-title"><i className="ri-checkbox-multiple-line"></i> Today's tiny tasks</div>
-                        <div className="card-sub">Keep this list short and realistic — your brain loves finishing things.</div>
-                      </div>
-                      <div className="badge-soft"><i className="ri-plant-line"></i> {completedCount} done</div>
-                    </div>
-
-                    <div className="filter-row">
-                      <span>Filter:</span>
-                      <div className="filter-chips">
-                        {["All","Study","Health","Mind"].map(cat => (
-                          <button key={cat} className={`filter-chip ${filterCategory===cat ? "active":""}`} onClick={()=>setFilterCategory(cat)}>{cat}</button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="tasks-list">
-                      {filteredTasks.length === 0 ? (
-                        <div style={{fontSize:13,color:"#8a8a8a",paddingTop:6}}>No tasks here yet. Add something so small that it feels almost too easy.</div>
-                      ) : filteredTasks.map(task => (
-                        <div key={task.id} className={`task-item ${task.completed ? "completed":""}`} onClick={()=>handleToggleTask(task.id)}>
-                          <div className="task-bullet"></div>
-                          <div className="task-body">
-                            <div className="task-title">{task.text}</div>
-                            <div className="task-meta-row">
-                              <span className="task-tag">{task.category}</span>
-                              {task.completed && <span className="task-status">+20 XP earned</span>}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <form className="task-form" onSubmit={handleAddTask}>
-                      <input className="task-input" placeholder="Add a tiny task (e.g. ‘Read 2 pages of Chemistry’)" value={newTaskText} onChange={(e)=>setNewTaskText(e.target.value)} />
-                      <select className="task-select" value={newTaskCategory} onChange={(e)=>setNewTaskCategory(e.target.value)}>
-                        <option value="Study">Study</option>
-                        <option value="Health">Health</option>
-                        <option value="Mind">Mind</option>
-                      </select>
-                      <button className="btn-primary" type="submit"><i className="ri-add-line"></i> Add</button>
-                    </form>
-                  </div>
-
-                </section>
-              </section>
-            </main>
-          </div>
-        </div>
-      );
     }
-
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<App />);
