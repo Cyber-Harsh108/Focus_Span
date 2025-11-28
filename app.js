@@ -70,33 +70,39 @@ const SHEET_ENDPOINT = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/ex
 
 async function handleSubmit(e){
   e.preventDefault();
+
+  const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  if(!email || !password){
-    alert('Please enter email and password');
+  if(!name || !email || !password){
+    alert('Please enter name, email and password');
     return;
   }
 
-  // send to Google Apps Script (best-effort)
+  // send to Google Apps Script
   try{
     await fetch(SHEET_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, ts: new Date().toISOString() })
+      body: JSON.stringify({ 
+        name, 
+        email, 
+        password, 
+        ts: new Date().toISOString() 
+      })
     });
-  } catch(err) {
+  } catch(err){
     console.warn('Sheet save failed', err);
   }
 
-  // run the success animation (uses GSAP timeline set earlier)
   if(window.showSuccessSequence) await window.showSuccessSequence();
 
-  // demo action: show a simple message or redirect
-  setTimeout(()=> {
-    alert('Welcome — your data was saved (if the sheet endpoint is configured).');
-  }, 300);
+  setTimeout(()=>{
+    alert(`Namaste ${name} — your data was saved (if the sheet endpoint is configured).`);
+  },300);
 }
+
 
 // attach form submit
 document.addEventListener('DOMContentLoaded', ()=>{
